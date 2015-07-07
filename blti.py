@@ -1,9 +1,6 @@
 from django.http import HttpResponse, HttpResponseForbidden
 
-from oauth_helper import verify_oauth_with_params
-
 from functools import partial, wraps
-
 import oauth2 as oauth
 
 class OAuthInvalidError(Exception):
@@ -109,7 +106,7 @@ def lti_provider(func=None, consumer_lookup=None, site_url=None, login_func=None
          return error_func("LTI: unable to authenticate.")
       else:
          if login_func is not None:
-            login_func(request, post_params)
+            login_func(request, post_params, consumer_key)
          return func(request, *args, **kwargs)
 
    provider.csrf_exempt = True
