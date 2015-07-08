@@ -25,6 +25,7 @@ set default options with:
     import blti
 
     blti.set_lti_properties(
+        # this may be a callable or a dictionary-like object
 		consumer_lookup = {
 			'test_consumer': 'test_secret123'
 		},
