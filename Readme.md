@@ -18,7 +18,7 @@ see django_view.py
     def provider_view(request):
         pass # your authenticated view here
 
-N.B. to allow embedding your LTI provider in a frame, you may need to disable django clickjacking protection (e.g. also using @xframe_options_exempt)
+N.B. to allow the embedding of your LTI provider in an iframe, you may need to disable django clickjacking protection (e.g. also using @xframe_options_exempt) when the "launch_presentation_document_target" parameter is set to "iframe".
 
 set default options with:
 
