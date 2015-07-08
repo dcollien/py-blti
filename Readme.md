@@ -6,8 +6,13 @@ http://www.imsglobal.org/developers/LTI/test/v1p1/lms.php
 as both a provider and a consumer.
 
 
+    pip install blti
+
+
 As a provider:
 see django_view.py
+
+    from blti import lti_provider
 
     @lti_provider
     def provider_view(request):
@@ -17,7 +22,9 @@ N.B. to allow embedding your LTI provider in a frame, you may need to disable dj
 
 set default options with:
 
-    set_lti_properties(
+    import blti
+
+    blti.set_lti_properties(
 		consumer_lookup = {
 			'test_consumer': 'test_secret123'
 		},
@@ -30,12 +37,16 @@ set default options with:
 
 or pass them in:
 
-    @lti_provider(allow_origin='https://www.example.com')
+    import blti
+
+    @blti.lti_provider(allow_origin='https://www.example.com')
     def provider_view(request):
         pass
 
 
 As a consumer:
+
+    import blti
 
    	params = {
         'resource_link_id': 'unique value for the link',
@@ -57,5 +68,5 @@ As a consumer:
     url = 'https://www.some_provider.com/launch_url/'
 
     # this will be the same parameters, but with extra oauth and lti data, and the oauth_signature attached
-    post_data = sign_launch_data(url, params, 'my consumer key', 'my consumer secret')
+    post_data = blti.sign_launch_data(url, params, 'my consumer key', 'my consumer secret')
 
