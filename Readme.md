@@ -1,4 +1,4 @@
-A simple basic LTI authentication mechanism for django.
+A basic LTI authentication mechanism for django.
 
 Tested with:
 http://www.imsglobal.org/developers/LTI/test/v1p1/lms.php
