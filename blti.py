@@ -1,7 +1,13 @@
-from django.http import HttpResponse, HttpResponseForbidden
+try:
+   from django.http import HttpResponseForbidden
+except:
+   HttpResponseForbidden = lambda error_message: raise Exception(error_message)
 
 from functools import partial, wraps
 import oauth2 as oauth
+import time
+import os
+import string
 
 class OAuthInvalidError(Exception):
    pass
@@ -30,7 +36,11 @@ def verify_oauth_with_params(consumer_key, consumer_secret, url, parameters, met
 
 LTI_PROPS = {}
 
-def set_lti_properties(consumer_lookup=None, site_url=None, login_func=None, require_post=None, error_func=None):
+def set_lti_properties(consumer_lookup=None, site_url=None, login_func=None, require_post=None, error_func=None, allow_origin=None):
+   """
+   Set the default properties for the lti_provider decorator.
+   """
+
    global LTI_PROPS
    
    if consumer_lookup is not None:
@@ -42,9 +52,43 @@ def set_lti_properties(consumer_lookup=None, site_url=None, login_func=None, req
    if require_post is not None:
       LTI_PROPS['require_post'] = require_post
    if error_func is not None:
-      LTI_PROPS['error_func'] = error_func
+      LTI_PROPS['error_func'] = HttpResponseForbidden
+   if allow_origin is not None:
+      LTI_PROPS['allow_origin'] = allow_origin
 
-def lti_provider(func=None, consumer_lookup=None, site_url=None, login_func=None, require_post=None, error_func=None):
+def sign_launch_data(url, launch_data, consumer_key, secret):
+   """
+   Generate the basic LTI launch data that needs to be POSTed to the given URL.
+
+   launch_data -- a dictionary of LTI launch parameters, must contain "resource_link_id".
+                   it is recommended that this also contain "user_id", "resource_link_title", "roles", etc.
+   """
+
+   chars = string.ascii_uppercase + string.digits + string.ascii_lowercase
+   nonce_chars = [chars[ord(x) % len(chars)] for x in os.urandom(32)]
+
+   assert('resource_link_id' in launch_data)
+
+   lti_params = {
+      'lti_message_type': 'basic-lti-launch-request',
+      'lti_version': 'LTI-1p0',
+
+      'oauth_consumer_key': consumer_key,
+      'oauth_signature_method': 'HMAC-SHA1',
+      'oauth_timestamp': int(time.time()),
+      'oauth_nonce': ''.join(nonce_chars),
+      'oauth_version': '1.0'
+   }
+
+   lti_params.update(launch_data)
+
+   return sign_oauth_with_params(consumer_key, secret, url, lti_params)
+
+def lti_provider(func=None, consumer_lookup=None, site_url=None, login_func=None, require_post=None, error_func=None, allow_origin=None):
+   """
+   Django view decorator to create a basic LTI authenticated provider endpoint to receive bLTI POST requests.
+   """
+
    if func is None:
       return partial(
          lti_provider, 
@@ -52,7 +96,8 @@ def lti_provider(func=None, consumer_lookup=None, site_url=None, login_func=None
          site_url=site_url, 
          login_func=login_func,
          require_post=require_post,
-         error_func=error_func
+         error_func=error_func,
+         allow_origin=allow_origin
       )
 
    # Set defaults
@@ -66,6 +111,8 @@ def lti_provider(func=None, consumer_lookup=None, site_url=None, login_func=None
       require_post = LTI_PROPS.get('require_post', True)
    if error_func is None:
       error_func = LTI_PROPS.get('error_func', error_func)
+   if allow_origin is None:
+      allow_origin = LTI_PROPS.get('allow_origin', '*')
 
    @wraps(func)
    def provider(request, *args, **kwargs):
@@ -110,7 +157,13 @@ def lti_provider(func=None, consumer_lookup=None, site_url=None, login_func=None
       else:
          if login_func is not None:
             login_func(request, post_params, consumer_key)
-         return func(request, *args, **kwargs)
+         response = func(request, *args, **kwargs)
+
+         if allow_origin:
+            response['Access-Control-Allow-Origin'] = allow_origin
+            response['Access-Control-Expose-Headers'] = 'Access-Control-Allow-Origin'
+
+         return response
 
    provider.csrf_exempt = True
    return provider

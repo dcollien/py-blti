@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from blti import lti_provider, set_lti_properties
 
-def do_login(request, params):
+def do_login(request, params, consumer_key):
 	pass # TODO: log request.user in using verified params
 
 set_lti_properties(
@@ -11,6 +11,7 @@ set_lti_properties(
 	site_url = 'https://www.example.com',
 	login_func = do_login,
 	require_post = True,
+	allow_origin = '*'
 	#error_func = some_error_callable
 )
 
