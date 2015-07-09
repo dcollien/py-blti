@@ -1,7 +1,8 @@
 try:
    from django.http import HttpResponseForbidden
 except:
-   HttpResponseForbidden = lambda error_message: raise Exception(error_message)
+   def HttpResponseForbidden(error_message):
+      raise Exception(error_message)
 
 from functools import partial, wraps
 import oauth2 as oauth
@@ -157,7 +158,7 @@ def lti_provider(func=None, consumer_lookup=None, site_url=None, login_func=None
       else:
          if login_func is not None:
             login_func(request, post_params, consumer_key)
-         response = func(request, *args, **kwargs)
+         response = func(request, post_params, consumer_key, *args, **kwargs)
 
          if allow_origin:
             response['Access-Control-Allow-Origin'] = allow_origin

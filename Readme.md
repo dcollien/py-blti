@@ -15,7 +15,7 @@ see django_view.py
     from blti import lti_provider
 
     @lti_provider
-    def provider_view(request):
+    def provider_view(request, post_params, consumer_key, *args, **kwargs):
         pass # your authenticated view here
 
 N.B. to allow the embedding of your LTI provider in an iframe, you may need to disable django clickjacking protection (e.g. also using @xframe_options_exempt) when the "launch_presentation_document_target" parameter is set to "iframe".
@@ -41,7 +41,7 @@ or pass them in:
     import blti
 
     @blti.lti_provider(allow_origin='https://www.example.com')
-    def provider_view(request):
+    def provider_view(request, post_params, consumer_key, *args, **kwargs):
         pass
 
 

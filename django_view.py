@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from blti import lti_provider, set_lti_properties
 
-def do_login(request, params, consumer_key):
+def do_login(request, post_params, consumer_key):
 	pass # TODO: log request.user in using verified params
 
 set_lti_properties(
@@ -16,7 +16,7 @@ set_lti_properties(
 )
 
 @lti_provider
-def provider_view(request):
+def provider_view(request, post_params, consumer_key, *args, **kwargs):
 	if request.method == 'POST':
 		return HttpResponse("User verified")
 	else:
