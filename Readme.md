@@ -30,7 +30,6 @@ set default options with:
 			'test_consumer': 'test_secret123'
 		},
 		site_url = 'https://www.example.com', # your site URL (if set to None, Django will try to infer it from the request)
-		login_func = do_login, # the login function delegate (to log in or create new users)
 		require_post = True, # this view only accepts POST requests
 		error_func = some_error_callable # the callable to use to handle errors. Defaults to HttpResponseForbidden
         allow_origin = '*' # the value for the Access-Control-Allow-Origin header

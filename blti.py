@@ -37,7 +37,7 @@ def verify_oauth_with_params(consumer_key, consumer_secret, url, parameters, met
 
 LTI_PROPS = {}
 
-def set_lti_properties(consumer_lookup=None, site_url=None, login_func=None, require_post=None, error_func=None, allow_origin=None):
+def set_lti_properties(consumer_lookup=None, site_url=None, require_post=None, error_func=None, allow_origin=None):
    """
    Set the default properties for the lti_provider decorator.
    """
@@ -48,8 +48,6 @@ def set_lti_properties(consumer_lookup=None, site_url=None, login_func=None, req
       LTI_PROPS['consumer_lookup'] = consumer_lookup
    if site_url is not None:
       LTI_PROPS['site_url'] = site_url
-   if login_func is not None:
-      LTI_PROPS['login_func'] = login_func
    if require_post is not None:
       LTI_PROPS['require_post'] = require_post
    if error_func is not None:
@@ -85,7 +83,7 @@ def sign_launch_data(url, launch_data, consumer_key, secret):
 
    return sign_oauth_with_params(consumer_key, secret, url, lti_params)
 
-def lti_provider(func=None, consumer_lookup=None, site_url=None, login_func=None, require_post=None, error_func=None, allow_origin=None):
+def lti_provider(func=None, consumer_lookup=None, site_url=None, require_post=None, error_func=None, allow_origin=None):
    """
    Django view decorator to create a basic LTI authenticated provider endpoint to receive bLTI POST requests.
    """
@@ -94,8 +92,7 @@ def lti_provider(func=None, consumer_lookup=None, site_url=None, login_func=None
       return partial(
          lti_provider, 
          consumer_lookup=consumer_lookup, 
-         site_url=site_url, 
-         login_func=login_func,
+         site_url=site_url,
          require_post=require_post,
          error_func=error_func,
          allow_origin=allow_origin
@@ -106,8 +103,6 @@ def lti_provider(func=None, consumer_lookup=None, site_url=None, login_func=None
       consumer_lookup = LTI_PROPS.get('consumer_lookup', {})
    if site_url is None:
       site_url = LTI_PROPS.get('site_url', None)
-   if login_func is None:
-      login_func = LTI_PROPS.get('login_func', None)
    if require_post is None:
       require_post = LTI_PROPS.get('require_post', True)
    if error_func is None:
@@ -156,8 +151,6 @@ def lti_provider(func=None, consumer_lookup=None, site_url=None, login_func=None
       if not is_valid:
          return error_func("LTI: unable to authenticate.")
       else:
-         if login_func is not None:
-            login_func(request, post_params, consumer_key)
          response = func(request, post_params, consumer_key, *args, **kwargs)
 
          if allow_origin:

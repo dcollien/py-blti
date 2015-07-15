@@ -9,7 +9,6 @@ set_lti_properties(
 		'test_consumer': 'test_secret123'
 	},
 	site_url = 'https://www.example.com',
-	login_func = do_login,
 	require_post = True,
 	allow_origin = '*'
 	#error_func = some_error_callable
