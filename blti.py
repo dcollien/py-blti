@@ -51,7 +51,7 @@ def set_lti_properties(consumer_lookup=None, site_url=None, require_post=None, e
    if require_post is not None:
       LTI_PROPS['require_post'] = require_post
    if error_func is not None:
-      LTI_PROPS['error_func'] = HttpResponseForbidden
+      LTI_PROPS['error_func'] = error_func
    if allow_origin is not None:
       LTI_PROPS['allow_origin'] = allow_origin
 
@@ -106,7 +106,7 @@ def lti_provider(func=None, consumer_lookup=None, site_url=None, require_post=No
    if require_post is None:
       require_post = LTI_PROPS.get('require_post', True)
    if error_func is None:
-      error_func = LTI_PROPS.get('error_func', error_func)
+      error_func = LTI_PROPS.get('error_func', HttpResponseForbidden)
    if allow_origin is None:
       allow_origin = LTI_PROPS.get('allow_origin', '*')
 
