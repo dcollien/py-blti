@@ -2,3 +2,4 @@
 dist/
 build/
 blti.egg-info/
+*.pyc
