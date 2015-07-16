@@ -122,7 +122,7 @@ def lti_provider(func=None, consumer_lookup=None, site_url=None, require_post=No
 
       consumer_key = post_params.get('oauth_consumer_key', None)
 
-      if 'oauth_consumer_key' is None:
+      if consumer_key is None:
          return error_func('LTI: no consumer key provided')
       
       if callable(consumer_lookup):
@@ -131,7 +131,7 @@ def lti_provider(func=None, consumer_lookup=None, site_url=None, require_post=No
          consumer_secret = consumer_lookup.get(consumer_key, None)
 
       if consumer_secret is None:
-         return error_func('LTI: unknown consumer ' + consumer_key)
+         return error_func('LTI: unknown consumer ' + str(consumer_key))
 
       if site_url:
          url = site_url + request.path

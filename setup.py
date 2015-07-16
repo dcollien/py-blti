@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
    name='blti',
-   version='0.1.3',
+   version='0.1.4',
    py_modules=['blti'],
    author='David Collien',
    author_email='me@dcollien.com',
