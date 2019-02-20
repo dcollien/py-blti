@@ -52,7 +52,7 @@ As a consumer:
         'resource_link_id': 'unique value for the link',
         'resource_link_title': 'title of the link, e.g link text',
         'resource_link_description': 'description for the link',
-        'user_id': 'some_user_id_123,
+        'user_id': 'some_user_id_123',
         'user_image': 'https://www.example.com/some_user_id_123.png',
         'roles' : 'Instructor',
         'lis_person_name_full': 'Some User',
