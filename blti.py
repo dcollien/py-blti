@@ -13,9 +13,9 @@ import string
 class OAuthInvalidError(Exception):
    pass
 
-def sign_oauth_with_params(consumer_key, consumer_secret, url, parameters, method='POST'):
+def sign_oauth_with_params(consumer_key, consumer_secret, url, parameters, method='POST', is_form_encoded=False):
    consumer = oauth.Consumer(key=consumer_key, secret=consumer_secret)
-   oauth_request = oauth.Request(method=method, url=url, parameters=parameters)
+   oauth_request = oauth.Request(method=method, url=url, parameters=parameters, is_form_encoded=is_form_encoded)
    hmac = oauth.SignatureMethod_HMAC_SHA1()
    oauth_request.sign_request(hmac, consumer, None)
 
@@ -55,7 +55,7 @@ def set_lti_properties(consumer_lookup=None, site_url=None, require_post=None, e
    if allow_origin is not None:
       LTI_PROPS['allow_origin'] = allow_origin
 
-def sign_launch_data(url, launch_data, consumer_key, secret):
+def sign_launch_data(url, launch_data, consumer_key, secret, is_form_encoded=is_form_encoded):
    """
    Generate the basic LTI launch data that needs to be POSTed to the given URL.
 
@@ -81,7 +81,7 @@ def sign_launch_data(url, launch_data, consumer_key, secret):
 
    lti_params.update(launch_data)
 
-   return sign_oauth_with_params(consumer_key, secret, url, lti_params)
+   return sign_oauth_with_params(consumer_key, secret, url, lti_params, is_form_encoded)
 
 def lti_provider(func=None, consumer_lookup=None, site_url=None, require_post=None, error_func=None, allow_origin=None):
    """
