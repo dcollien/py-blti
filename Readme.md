@@ -68,5 +68,5 @@ As a consumer:
     url = 'https://www.some_provider.com/launch_url/'
 
     # this will be the same parameters, but with extra oauth and lti data, and the oauth_signature attached
-    post_data = blti.sign_launch_data(url, params, 'my consumer key', 'my consumer secret', is_form_encoded=True)
+    post_data = blti.sign_launch_data(url, params, 'my consumer key', 'my consumer secret')
 

@@ -81,7 +81,7 @@ def sign_launch_data(url, launch_data, consumer_key, secret, is_form_encoded=Tru
 
    lti_params.update(launch_data)
 
-   return sign_oauth_with_params(consumer_key, secret, url, lti_params, is_form_encoded)
+   return sign_oauth_with_params(consumer_key, secret, url, lti_params)
 
 def lti_provider(func=None, consumer_lookup=None, site_url=None, require_post=None, error_func=None, allow_origin=None):
    """
