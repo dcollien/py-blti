@@ -66,8 +66,6 @@ def sign_launch_data(url, launch_data, consumer_key, secret, is_form_encoded=Tru
    chars = string.ascii_uppercase + string.digits + string.ascii_lowercase
    nonce_chars = [chars[ord(x) % len(chars)] for x in os.urandom(32)]
 
-   assert('resource_link_id' in launch_data)
-
    lti_params = {
       'lti_message_type': 'basic-lti-launch-request',
       'lti_version': 'LTI-1p0',
