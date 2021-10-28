@@ -19,6 +19,10 @@ def sign_oauth_with_params(consumer_key, consumer_secret, url, parameters, metho
    hmac = oauth.SignatureMethod_HMAC_SHA1()
    oauth_request.sign_request(hmac, consumer, None)
 
+   # Ensure signature is unicode string
+   if isinstance(oauth_request['oauth_signature'], bytes):
+      oauth_request['oauth_signature'] = oauth_request['oauth_signature'].decode('utf-8')
+
    return oauth_request
 
 def verify_oauth_with_params(consumer_key, consumer_secret, url, parameters, method='POST'):
@@ -28,6 +32,10 @@ def verify_oauth_with_params(consumer_key, consumer_secret, url, parameters, met
 
    try:
       signature = oauth_request.get_parameter('oauth_signature')
+      
+      # Ensure signature is bytes
+      if not isinstance(signature, bytes):
+         signature = signature.encode('utf-8')
    except:
       raise OAuthInvalidError("missing OAuth signature")
 
@@ -64,7 +72,7 @@ def sign_launch_data(url, launch_data, consumer_key, secret, is_form_encoded=Tru
    """
 
    chars = string.ascii_uppercase + string.digits + string.ascii_lowercase
-   nonce_chars = [chars[ord(x) % len(chars)] for x in os.urandom(32)]
+   nonce_chars = [chars[(x if isinstance(x, int) else ord(x)) % len(chars)]for x in os.urandom(32)]
 
    lti_params = {
       'lti_message_type': 'basic-lti-launch-request',
@@ -116,7 +124,7 @@ def lti_provider(func=None, consumer_lookup=None, site_url=None, require_post=No
          else:
             return func(request, *args, **kwargs)
 
-      post_params = dict(request.POST.iteritems())
+      post_params = request.POST.dict()
 
       consumer_key = post_params.get('oauth_consumer_key', None)
 
